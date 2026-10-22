@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朱石麟戰士大冒險</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e67e22;
+            --accent-color: #c0392b;
+            --success-color: #27ae60;
+            --bg-color: #1e272e;
+            --card-bg: #f5f6fa;
+            --text-color: #2f3640;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #dcdde1;
+            color: var(--text-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 4px solid #718093;
+        }
+        header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #fbc531;
+        }
+        header h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 25px;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .welcome-box {
+            text-align: center;
+        }
+        .welcome-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group label {
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            padding: 10px 15px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 350px;
+            border: 2px solid #718093;
+            border-radius: 6px;
+            outline: none;
+        }
+        .monster-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .monster-btn {
+            background-color: #2f3640;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .monster-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        .alert {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 8px;
+            min-height: 22px;
+        }
+        .battle-field {
+            background: #e4f1fe;
+            border: 3px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .battle-status {
+            background: rgba(255,255,255,0.9);
+            border: 2px solid #333;
+            border-radius: 6px;
+            padding: 10px 15px;
+            width: 42%;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .battle-status h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+        .hp-bar-container {
+            background: #ccc;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #333;
+            margin-top: 5px;
+        }
+        .hp-bar {
+            background: var(--success-color);
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s;
+        }
+        .ui-box-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .question-box {
+            background: #fff;
+            border: 3px solid #2c3e50;
+            border-radius: 8px;
+            padding: 18px;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .question-meta {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .question-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 6px;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+        }
+        .option-btn {
+            background: #34495e;
+            color: white;
+            border: 3px solid #2c3e50;
+            border-radius: 8px;
+            padding: 12px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-btn:hover {
+            background: #2980b9;
+            transform: scale(1.02);
+        }
+        .result-card {
+            background: #fff;
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            border: 3px solid #2c3e50;
+        }
+        .cartoon-avatar {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        .result-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .result-title.fail { color: var(--accent-color); }
+        .result-title.hard { color: var(--secondary-color); }
+        .result-title.easy { color: var(--success-color); }
+        .result-desc {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .review-list {
+            text-align: left;
+            margin-top: 25px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .review-item {
+            background: #f1f2f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 5px solid #ccc;
+            font-size: 14px;
+        }
+        .review-item.correct { border-left-color: var(--success-color); }
+        .review-item.incorrect { border-left-color: var(--accent-color); }
+        .btn-restart {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-restart:hover {
+            background-color: #34495e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>朱石麟戰士大戰文言怪獸</h1>
+            <p>中三級上學期統測溫習重點實戰演練</p>
+        </header>
+        <div class="content">
+            
+            <!-- 首頁選擇怪獸 -->
+            <div id="screen-home" class="screen active">
+                <div class="welcome-box">
+                    <h2>選擇你的對戰對手</h2>
+                    <p style="margin-bottom: 15px; color: #555;">勇敢的朱石麟戰士啊！選擇你要挑戰的怪物，並通過答題擊敗它們吧！</p>
+                    <div class="form-group">
+                        <label for="player-name">請輸入朱石麟戰士姓名：</label>
+                        <input type="text" id="player-name" placeholder="例如：陳大文" autocomplete="off">
+                        <div id="name-alert" class="alert"></div>
+                    </div>
+                    <div style="margin-top: 20px; font-weight: bold; color: #2c3e50;">請點擊怪物以開始對戰：</div>
+                    <div class="monster-select">
+                        <button class="monster-btn" type="button" onclick="startBattle('monster1')">單元重點怪</button>
+                        <button class="monster-btn" type="button" onclick="startBattle('monster2')">帶毒夾竹桃</button>
+                        <button class="monster-btn" type="button" onclick="startBattle('monster3')">音波王小玉</button>
+                        <button class="monster-btn" type="button" onclick="startBattle('monster4')">百變聲君</button>
+                        <button class="monster-btn" type="button" onclick="startBattle('boss')">最後大魔王</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 對戰畫面 -->
+            <div id="screen-quiz" class="screen">
+                <div class="battle-field">
+                    <div class="battle-status">
+                        <h4 id="player-status-name">朱石麟戰士</h4>
+                        <div>錯失次數: <span id="wrong-count" style="color:var(--accent-color); font-weight:bold;">0</span> / 5</div>
+                        <div class="hp-bar-container"><div id="player-hp" class="hp-bar"></div></div>
+                    </div>
+                    <div class="battle-status" style="text-align: right;">
+                        <h4 id="monster-name-display">怪物</h4>
+                        <div>剩餘題目: <span id="ques-remaining">0</span> 題</div>
+                        <div class="hp-bar-container"><div id="monster-hp" class="hp-bar"></div></div>
+                    </div>
+                </div>
+
+                <div class="ui-box-container">
+                    <div class="question-box">
+                        <div class="question-meta">
+                            <span id="question-counter">題目 1 / 20</span>
+                            <span id="timer-display" style="color: #2980b9; font-weight:bold;">用時：00:00</span>
+                        </div>
+                        <div class="question-text" id="ui-question-content">題目載入中...</div>
+                    </div>
+                    <div class="options-grid" id="ui-options-container"></div>
+                </div>
+            </div>
+
+            <!-- 結算畫面 -->
+            <div id="screen-result" class="screen">
+                <div class="result-card">
+                    <div class="cartoon-avatar" id="result-avatar">🛌</div>
+                    <div class="result-title" id="result-title">中道崩殂</div>
+                    <p class="result-desc" id="result-desc">你未能堅持到最後，被怪物擊敗了。</p>
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;" id="result-score-text">答對題數：0 / 0 題</div>
+                    <div style="font-size: 15px; color: #e67e22; font-weight: bold;" id="result-time-text">總用時：0分0秒</div>
+                    
+                    <button class="btn-restart" type="button" onclick="goToHome()">再來一次</button>
+
+                    <div class="review-section">
+                        <h3 style="color: #2c3e50; margin-bottom: 10px;">答題檢討與正確答案</h3>
+                        <div class="review-list" id="review-list"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const bank1 = [
+            {q: "插敘法在結構上屬於甚麼性質的內容？", options: ["對過去事件片段的回憶或對有關人和事的補充解釋", "全文最核心且不可刪除的主體部分", "直接推動故事高潮發展的唯一主線", "完全虛構且與事件甲毫無關聯的內容"], ans: 0},
+            {q: "關於插敘法的注意要點，下列哪一項正確？", options: ["插敘段落是依附在事件甲上的，即使刪去也不妨礙主體敘述", "插敘段落必須喧賓奪主成為文章核心", "插敘中的回憶部分是全文主體不可刪去", "文章中絕對不能出現多於一個插敘部分"], ans: 0},
+            {q: "插敘與倒敍的主要區別在於甚麼？", options: ["倒敍回憶是全文主體不可刪去，插敘即使刪去也不妨礙主體", "倒敍可以加入回憶而插敘完全不能回憶", "插敘是全文主體而倒敍只是附屬部分", "兩者在結構和內容上完全沒有任何區別"], ans: 0},
+            {q: "記敘的線索是指甚麼？", options: ["貫穿全文脈絡的事物，可以是人物、事件、物件等", "文章開首的第一個字或第一個標點符號", "作者寫作時的個人情緒起伏變化", "故事發生時的具體天氣狀況說明"], ans: 0},
+            {q: "下列哪一項可以作為記敘的線索？", options: ["人物、事件、物件、時間空間轉換、思想感情變化", "只有主角的年齡大小", "只有故事發生的具體地點", "只有文章的段落總數情況"], ans: 0},
+            {q: "場面描寫的「三兄弟」是指哪三個要素？", options: ["人物、事件、環境", "時間、地點、人物", "起因、經過、結果", "動作、語言、神態"], ans: 0},
+            {q: "在描寫場面時，除了詳細描述中心事件外，還應描寫甚麼？", options: ["人物的神情、動作、言語及環境渲染出的氣氛", "作者的個人生平簡介", "文章的中心思想總結", "未來故事發展的預測"], ans: 0},
+            {q: "描寫順序中，按照事件發生的時間先後來描述屬於甚麼？", options: ["時間順序", "空間轉移", "觀察角度的轉變", "邏輯推理順序"], ans: 0},
+            {q: "描寫順序中，按照場面的空間轉移作描述次序屬於甚麼？", options: ["空間轉移", "時間順序", "觀察角度的轉變", "自由發散順序"], ans: 0},
+            {q: "描寫順序中，按照觀察角度的轉變作描述次序屬於甚麼？", options: ["觀察角度的轉變", "時間順序", "空間轉移", "隨意跳躍順序"], ans: 0},
+            {q: "襯托手法中，「正襯」是指甚麼？", options: ["利用與主要事物性質相近的事物作陪襯", "利用與主要事物性質相反的事物作陪襯", "直接描寫主角的心理活動", "完全不作任何比較與陪襯"], ans: 0},
+            {q: "襯托手法中，「反襯」是指甚麼？", options: ["利用與主要事物性質相反或對立的事物作陪襯", "利用性質相近的事物作陪襯", "描寫兩個完全一模一樣的事物", "用誇張手法描寫客觀景物"], ans: 0},
+            {q: "比喻手法中，明喻的特點是甚麼？", options: ["本體和喻體同時出現，中間加上比喻詞如像、若、彷彿等", "本體和喻體都出現但不用比喻詞直接說成", "本體和喻詞都不出現直接借用喻體", "完全不用比喻詞且本體隱藏不見"], ans: 0},
+            {q: "比喻手法中，暗喻的特點是甚麼？", options: ["本體和喻體都出現，但不用像、似等比喻詞而是直接把本體說成喻體", "本體和喻體都出現並用像字連接", "本體和喻詞都不出現直接借喻體", "完全不出現任何比喻相關詞彙"], ans: 0},
+            {q: "比喻手法中，借喻的特點是甚麼？", options: ["本體和喻詞都不出現，直接借用喻體來代替本體", "本體和喻體都出現並用像字連接", "本體出現但喻體完全不出現", "中間必須加上彷彿或猶如等詞"], ans: 0},
+            {q: "在描寫場面期間，氣氛層層遞進、變化多端，這屬於甚麼寫作手法？", options: ["層遞", "對比", "象徵", "白描"], ans: 0},
+            {q: "按描寫景物的狀態分類，可分為哪兩類？", options: ["靜態描寫、動態描寫", "正面描寫、側面描寫", "定點觀察、步移法", "感官描寫、直抒胸臆"], ans: 0},
+            {q: "按觀察景物的位置分類，可分為哪兩類？", options: ["定點觀察法、步移法", "靜態描寫、動態描寫", "直接描寫、間接描寫", "視覺描寫、聽覺描寫"], ans: 0},
+            {q: "下列哪一項屬於景物描寫的常用維度？", options: ["通感、感官、動靜、定點與步移、正側面描寫", "只有誇張與排比修辭手法", "只有倒敍與插敘結構安排", "只有人物對話與心理活動"], ans: 0},
+            {q: "插敘段落如果與主體記述事件甲毫無關聯，會變成甚麼？", options: ["冗文", "精彩高潮", "核心主線", "客觀事實"], ans: 0}
+        ];
+
+        const bank2 = [
+            {q: "在《爸爸的花兒落了》中，作者曾運用反襯突出甚麼？", options: ["英子和父親的性格", "學校老師與同學的關係", "北京與江南的氣候差異", "時代背景的動盪不安"], ans: 0},
+            {q: "在英子賴床時，母親拿不定主意，而父親一進來就二話不說地管教，這是甚麼反襯？", options: ["以媽媽的溫和反襯父親的嚴厲", "以父親的溫和反襯母親的嚴厲", "以英子的賴床反襯父親的懶惰", "以弟妹的哭鬧反襯母親的冷靜"], ans: 0},
+            {q: "當英子得知父親死訊後，弟妹們只顧玩耍而英子表現冷靜，這是借甚麼作反襯？", options: ["借不懂事的弟妹作反襯突出英子的成熟穩重", "借醫院護士作反襯突出英子的慌張", "借學校校長作反襯突出英子的頑皮", "借路人作反襯突出英子的冷漠"], ans: 0},
+            {q: "在英子賴床時，爸爸沒有因她年少放任，反而使用甚麼抽打英子？", options: ["雞毛撣子", "竹條藤條", "厚重字典", "長尺木棍"], ans: 0},
+            {q: "爸爸雖然管教嚴厲，但在甚麼事上第一次破例讓英子坐車回校？", options: ["讓英子乘車回校並拿棉襖及銅板給她", "允許英子不用參加畢業典禮", "准許英子轉學到其他學校", "答應帶英子去遠行旅遊"], ans: 0},
+            {q: "爸爸拿棉襖及銅板給英子，體現了爸爸甚麼性格特點？", options: ["外冷內暖、關愛女兒", "嚴厲苛刻、冷酷無情", "性格懦弱、優柔寡斷", "粗心大意、毫不在乎"], ans: 0},
+            {q: "古語有云「樹欲靜而風不止，子欲養而親不待也」，這提醒我們要怎樣？", options: ["體諒父母苦心、理解唠叨、多關心父母", "長大後離家越遠越好", "不要聽從父母任何意見", "追求物質享樂忽視親情"], ans: 0},
+            {q: "《爸爸的花兒落了》作者是誰？", options: ["林海音", "冰心", "朱自清", "老舍"], ans: 0},
+            {q: "文中「花兒落了」隱喻了甚麼？", options: ["父親的去世以及童年的結束", "校園裏的花園植物枯萎", "英子考試不及格被留級", "家裏經濟破產無錢買花"], ans: 0},
+            {q: "英子畢業典禮當天，父親缺席的原因是甚麼？", options: ["父親因病住院重病在床", "父親出差到遠方外地", "父親忘記了日子時間", "父親故意不理睬英子"], ans: 0},
+            {q: "畢業典禮代表甚麼重要階段？", options: ["小學畢業步入中學，象徵童年結束走向成熟", "只是普通上學日的一天", "代表英子準備結婚嫁人", "代表英子要立刻出國留學"], ans: 0},
+            {q: "爸爸種的夾竹桃怎樣了？", options: ["落了好幾大錕，小拇指大小的白花敗了", "夾竹桃全部被蟲子吃光", "夾竹桃開得無比燦爛茂盛", "夾竹桃一夜之間被移植走"], ans: 0},
+            {q: "爸爸對英子說「闖練」的含義是甚麼？", options: ["要英子學會獨立、堅強地面對生活挑戰", "要英子去學武術防身", "要英子經常到街上闖禍", "要英子獨自去外地打工"], ans: 0},
+            {q: "英子趕到醫院探望父親時，父親對她說了甚麼最後的話？", options: ["沒有說話，英子心裏有數", "「妳要好好照顧弟弟妹妹」", "「爸爸今天覺得好多了」", "「快回學校參加畢業禮」"], ans: 0},
+            {q: "文章開首寫夾竹桃，結尾寫爸爸的花兒落了，首尾呼應了甚麼？", options: ["爸爸的去世與夾竹桃的凋謝緊密相連", "學校的花園即將要被拆卸", "北京的春天非常寒冷乾燥", "英子非常喜歡花卉植物"], ans: 0}
+        ];
+
+        const bank3 = [
+            {q: "在描寫白妞說書的技藝時，除了聲音大小外善於用其他感官作比喻，稱為甚麼手法？", options: ["通感（移覺）", "誇張對比手法", "白描雙關手法", "借景抒情手法"], ans: 0},
+            {q: "運用「通感」手法的好處是甚麼？", options: ["將抽象的感官變得具體易明，給予讀者煥然一新的感覺", "使文章文字變得更加艱澀難懂", "讓讀者完全失去閱讀興趣", "純粹用來增加文章的字數"], ans: 0},
+            {q: "原文「五臟六腑裏，像熨斗熨過，無一處不伏貼」將聽覺化為甚麼感官？", options: ["觸覺、味覺", "視覺與嗅覺", "純粹聽覺無變化", "空間與方位感"], ans: 0},
+            {q: "「五臟六腑裏，像熨斗熨過」主要是突出白妞甚麼？", options: ["唱書聲音甜美、悅耳，聽者身心極度舒適爽快", "唱書聲音刺耳令人難受", "唱書速度極快令人窒息", "唱書內容滑稽好笑"], ans: 0},
+            {q: "原文「忽然拔了一個尖兒，像一線鋼絲拋入天際」將聽覺化為甚麼感官？", options: ["視覺", "觸覺", "味覺", "嗅覺"], ans: 0},
+            {q: "「像一線鋼絲拋入天際」突出了白妞的甚麼特點？", options: ["高音突然上升，尖銳細長而直衝雲霄", "聲音低沉緩慢悠揚", "聲音斷斷續續不穩", "聲音粗糙沙啞低沉"], ans: 0},
+            {q: "原文形容白妞的歌聲「恍如由傲來峰西面攀登泰山」，這是比喻甚麼？", options: ["歌聲隨音階層遞進，越翻越險，越險越奇", "爬山非常艱難痛苦", "泰山風景優美壯麗", "歌手體力非常充沛"], ans: 0},
+            {q: "在攀登泰山的描寫中，依次出現了哪三個地標？", options: ["傲來峰、扇子崖、南天門", "玉皇頂、天街、南天門", "十八盤、中天門、南天門", "山腳、半山腰、山頂"], ans: 0},
+            {q: "原文「如一條飛蛇在黃山三十六峰半中腰裡盤旋穿插」比喻甚麼？", options: ["白妞由高音突轉低音，低處未算低，跌宕紛繁", "白妞在台上走位靈活", "琴師的琴弦突然斷了", "聽眾在台下四處走動"], ans: 0},
+            {q: "原文「像放那東洋煙火，一個彈子上天，隨化作千百道五色火光」比喻甚麼？", options: ["歌聲併發而出，繁音錯節，充滿震撼力與色彩感", "煙火大會即將開幕", "舞台發生火災事故", "觀眾情緒失控混亂"], ans: 0},
+            {q: "原文「有如花塢春曉，好鳥亂鳴」比喻甚麼？", options: ["弦子與白妞歌聲配合時的精彩場面，繁華美滿", "春天百花盛開公園", "鳥類生態保護區景", "舞台裝飾佈景設計"], ans: 0},
+            {q: "《明湖居聽書》作者是誰？", options: ["劉鶚", "魯迅", "朱自清", "老舍"], ans: 0},
+            {q: "文中琴師彈三弦時，觀眾最初的反應是甚麼？", options: ["起初不甚留神去聽", "起初掌聲雷動歡呼", "起初大聲喝倒彩起鬨", "起初安靜聆聽欣賞"], ans: 0},
+            {q: "觀眾最初不甚留神聽琴師彈三弦的原因是甚麼？", options: ["琴師外貌醜陋且演奏僅屬陪襯性質", "琴師彈奏聲音太小聽不見", "觀眾嫌票價太昂貴拒聽", "觀眾正在吃茶點心"], ans: 0},
+            {q: "觀眾後來對琴師的態度有何轉變？", options: ["不絕地叫好，熱烈讚賞", "中途離場抗議不滿意", "毫無反應如石沉大海", "要求退票離開戲園"], ans: 0}
+        ];
+
+        const bank4 = [
+            {q: "《口技》作者是誰？", options: ["林嗣環", "劉鶚", "范仲淹", "吳敬梓"], ans: 0},
+            {q: "「京中有善口技者」中的「善」字意思是甚麼？", "options": ["擅長", "善良", "喜愛", "完善"], ans: 0},
+            {q: "「於廳事之東北隅」中的「隅」字意思是甚麼？", "options": ["角落", "中央", "大門", "窗戶"], ans: 0},
+            {q: "「夫叱大兒聲」中的「叱」字意思是甚麼？", "options": ["喝罵", "稱讚", "親吻", "擁抱"], ans: 0},
+            {q: "「曳屋許許聲」中的「曳」字意思是甚麼？", "options": ["拉倒", "推開", "修繕", "焚燒"], ans: 0},
+            {q: "「眾響畢絕」中的「絕」字意思是甚麼？", "options": ["停止、消失", "絕對", "優秀", "絕望"], ans: 0},
+            {q: "作者在首段寫「口技人坐屏幛中，一桌、一椅、一扇、一撫尺而已」，末段寫相同道具，屬於甚麼手法？", "options": ["首尾呼應（首尾照應）", "倒敍插敘手法", "誇張排比手法", "借景抒情手法"], ans: 0},
+            {q: "首尾呼應的寫法在結構和主題上有甚麼作用？", "options": ["使文章結構更為嚴謹，並以簡單道具對比突顯藝人精湛技藝", "讓文章字數剛好達標不超長", "單純為了重複抄寫省力", "暗指當時劇場道具非常短缺"], ans: 0},
+            {q: "文中描寫賓客的反應（如屏氣凝神、伸頸側目），屬於甚麼寫作手法？", "options": ["側面烘托（側面描寫）", "正面直接讚美", "誇張神話描寫", "客觀數據統計"], ans: 0},
+            {q: "你認為描寫賓客反應比直接說出口技藝人表演精湛好在哪裏？", "options": ["側面烘托更有說服力，令人印象深刻如歷歷在目", "因為可以直接省去寫藝人的動作", "因為讀者比較喜歡看賓客聊天", "因為這樣可以大幅增加文章字數"], ans: 0},
+            {q: "《口技》選自哪一部清代筆記小說集？", "options": ["《虞初新志》", "《聊齋誌異》", "《閱微草堂筆記》", "《世說新語》"], ans: 0},
+            {q: "文章開首和結尾都提到哪幾樣簡單道具？", "options": ["一桌、一椅、一扇、一撫尺", "一琴、一棋、一書、一畫", "一刀、一劍、一弓、一箭", "一茶、一壺、一盃、一盞"], ans: 0},
+            {q: "口技表演由哪三個主要情節場面組成？", "options": ["深夜忽醒、火起大呼、歸於寂靜", "開市叫賣、茶樓聽書、散場回家", "狂風暴雨、雷電交加、雨過天晴", "嬰兒哭泣、母親哄睡、父親發怒"], ans: 0},
+            {q: "「婦撫兒乳」中的「乳」字意思是甚麼？", "options": ["餵奶、哺乳", "乳白色", "乳名小名", "玩具娃娃"], ans: 0},
+            {q: "「中間力拉崩倒之聲」中的「中間」古義是指甚麼？", "options": ["其中間雜", "空間正中央", "時間半中間", "地位居中位"], ans: 0}
+        ];
+
+        let playerName = "";
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let userAnswersHistory = [];
+
+        let startTime = null;
+        let timerInterval = null;
+        let finalElapsedSeconds = 0;
+        let currentMonsterName = "";
+
+        function shuffleArray(array) {
+            let arr = array.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                let temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+            return arr;
+        }
+
+        function prepareQuestions(bank, count) {
+            if (!Array.isArray(bank) || bank.length === 0) return [];
+            let sanitized = bank.filter(item => item && item.q && Array.isArray(item.options) && item.options.length >= 4);
+            let shuffled = shuffleArray(sanitized);
+            let take = Math.min(count, shuffled.length);
+            let selected = shuffled.slice(0, take);
+            
+            return selected.map(item => {
+                let originalOpts = item.options.slice();
+                let ansIndex = (typeof item.ans === 'number' && item.ans >= 0 && item.ans < originalOpts.length) ? item.ans : 0;
+                let correctText = originalOpts[ansIndex];
+                let randomizedOpts = shuffleArray(originalOpts);
+                let newAnsIdx = randomizedOpts.indexOf(correctText);
+                return {
+                    q: item.q,
+                    options: randomizedOpts,
+                    ans: newAnsIdx,
+                    correctText: correctText
+                };
+            });
+        }
+
+        function startBattle(monsterType) {
+            const nameInput = document.getElementById("player-name");
+            const alertBox = document.getElementById("name-alert");
+            playerName = nameInput ? nameInput.value.trim() : "";
+
+            if (!playerName) {
+                if (alertBox) alertBox.textContent = "請先輸入姓名。";
+                if (nameInput) nameInput.focus();
+                return;
+            }
+            if (alertBox) alertBox.textContent = "";
+
+            if (monsterType === 'monster1') {
+                currentMonsterName = "單元重點怪";
+                currentQuestions = prepareQuestions(bank1, 20);
+            } else if (monsterType === 'monster2') {
+                currentMonsterName = "帶毒夾竹桃";
+                currentQuestions = prepareQuestions(bank2, 15);
+            } else if (monsterType === 'monster3') {
+                currentMonsterName = "音波王小玉";
+                currentQuestions = prepareQuestions(bank3, 15);
+            } else if (monsterType === 'monster4') {
+                currentMonsterName = "百變聲君";
+                currentQuestions = prepareQuestions(bank4, 15);
+            } else if (monsterType === 'boss') {
+                currentMonsterName = "最後大魔王";
+                let b1 = prepareQuestions(bank1, 9);
+                let b2 = prepareQuestions(bank2, 7);
+                let b3 = prepareQuestions(bank3, 7);
+                let b4 = prepareQuestions(bank4, 7);
+                currentQuestions = shuffleArray(b1.concat(b2, b3, b4));
+            }
+
+            if (!currentQuestions || currentQuestions.length === 0) {
+                alert("題目準備失敗，請重新選擇怪物！");
+                return;
+            }
+
+            currentIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            userAnswersHistory = [];
+
+            const pStatus = document.getElementById("player-status-name");
+            const mStatus = document.getElementById("monster-name-display");
+            if (pStatus) pStatus.textContent = playerName;
+            if (mStatus) mStatus.textContent = currentMonsterName;
+
+            const homeScreen = document.getElementById("screen-home");
+            const quizScreen = document.getElementById("screen-quiz");
+            if (homeScreen) homeScreen.classList.remove("active");
+            if (quizScreen) quizScreen.classList.add("active");
+
+            startTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+
+            loadQuizStep();
+        }
+
+        function updateTimer() {
+            let elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+            let mins = Math.floor(elapsedSec / 60);
+            let secs = elapsedSec % 60;
+            const timerElem = document.getElementById("timer-display");
+            if (timerElem) {
+                timerElem.textContent = `用時：${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+        }
+
+        function loadQuizStep() {
+            if (currentIndex >= currentQuestions.length || wrongCount >= 5) {
+                endBattle();
+                return;
+            }
+
+            const qObj = currentQuestions[currentIndex];
+            const qCounter = document.getElementById("question-counter");
+            const qContent = document.getElementById("ui-question-content");
+            const wrongSpan = document.getElementById("wrong-count");
+            const remainSpan = document.getElementById("ques-remaining");
+            const playerHp = document.getElementById("player-hp");
+            const monsterHp = document.getElementById("monster-hp");
+            const optionsBox = document.getElementById("ui-options-container");
+
+            if (!qContent || !optionsBox) {
+                return;
+            }
+
+            if (qCounter) qCounter.textContent = `題目 ${currentIndex + 1} / ${currentQuestions.length}`;
+            qContent.textContent = qObj.q;
+            if (wrongSpan) wrongSpan.textContent = wrongCount;
+            if (remainSpan) remainSpan.textContent = currentQuestions.length - currentIndex;
+
+            if (playerHp) playerHp.style.width = `${Math.max(0, 100 - (wrongCount * 20))}%`;
+            if (monsterHp) monsterHp.style.width = `${Math.max(0, 100 - ((currentIndex / currentQuestions.length) * 100))}%`;
+
+            optionsBox.innerHTML = "";
+            qObj.options.forEach((opt, idx) => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.type = "button";
+                btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                btn.onclick = function() { handleAnswer(idx, qObj); };
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIdx, qObj) {
+            let isCorrect = (selectedIdx === qObj.ans);
+            if (isCorrect) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+
+            userAnswersHistory.push({
+                question: qObj.q,
+                selected: selectedIdx,
+                options: qObj.options,
+                correctIdx: qObj.ans,
+                isCorrect: isCorrect,
+                correctText: qObj.correctText
+            });
+
+            currentIndex++;
+            loadQuizStep();
+        }
+
+        function endBattle() {
+            if (timerInterval) clearInterval(timerInterval);
+            finalElapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+
+            const quizScreen = document.getElementById("screen-quiz");
+            const resultScreen = document.getElementById("screen-result");
+            if (quizScreen) quizScreen.classList.remove("active");
+            if (resultScreen) resultScreen.classList.add("active");
+
+            let mins = Math.floor(finalElapsedSeconds / 60);
+            let secs = finalElapsedSeconds % 60;
+            let totalQuestions = currentQuestions.length;
+
+            const avatar = document.getElementById("result-avatar");
+            const title = document.getElementById("result-title");
+            const desc = document.getElementById("result-desc");
+            const scoreText = document.getElementById("result-score-text");
+            const timeText = document.getElementById("result-time-text");
+            const reviewBox = document.getElementById("review-list");
+
+            if (wrongCount >= 5) {
+                if (avatar) avatar.textContent = "🛌";
+                if (title) {
+                    title.textContent = "中道崩殂";
+                    title.className = "result-title fail";
+                }
+                if (desc) desc.textContent = "你未能堅持到最後，被怪物擊敗了。";
+            } else if (wrongCount > 0) {
+                if (avatar) avatar.textContent = "🥵";
+                if (title) {
+                    title.textContent = "歷盡艱辛";
+                    title.className = "result-title hard";
+                }
+                if (desc) desc.textContent = "你歷盡艱辛，以滿身傷痕為代價擊敗了怪物。";
+            } else {
+                if (avatar) avatar.textContent = "😎";
+                if (title) {
+                    title.textContent = "易如反掌";
+                    title.className = "result-title easy";
+                }
+                if (desc) desc.textContent = "你大臂一揮，怪物頓時灰飛煙滅。";
+            }
+
+            if (scoreText) scoreText.textContent = `答對題數：${correctCount} / ${totalQuestions} 題`;
+            if (timeText) timeText.textContent = `總用時：${mins} 分 ${secs} 秒`;
+
+            if (reviewBox) {
+                reviewBox.innerHTML = "";
+                userAnswersHistory.forEach((ans, idx) => {
+                    let item = document.createElement("div");
+                    item.className = `review-item ${ans.isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    let userOptStr = ans.selected !== null ? `${String.fromCharCode(65 + ans.selected)}. ${ans.options[ans.selected]}` : "未作答";
+                    let correctOptStr = `${String.fromCharCode(65 + ans.correctIdx)}. ${ans.correctText}`;
+
+                    item.innerHTML = `<strong>Q${idx + 1}: ${ans.question}</strong><br>` +
+                                     `您的選擇：<span style="color:${ans.isCorrect?'var(--success-color)':'var(--accent-color)'};">${userOptStr}</span><br>` +
+                                     `正確答案：<span style="color:var(--success-color);">${correctOptStr}</span>`;
+                    reviewBox.appendChild(item);
+                });
+            }
+        }
+
+        function goToHome() {
+            const resultScreen = document.getElementById("screen-result");
+            const homeScreen = document.getElementById("screen-home");
+            if (resultScreen) resultScreen.classList.remove("active");
+            if (homeScreen) homeScreen.classList.add("active");
+            const nameInput = document.getElementById("player-name");
+            if (nameInput) {
+                nameInput.value = "";
+                nameInput.focus();
+            }
+        }
+    </script>
+</body>
+</html>
